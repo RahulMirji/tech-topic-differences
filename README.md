@@ -259,3 +259,4 @@ Contributions are welcome! If you'd like to add new topic recipes to `reference/
 
 This project is licensed under the [MIT License](LICENSE).
 Official trademarks and logos fetched by `tools/logo.py` remain the property of their respective owners and are utilized for editorial comparison purposes.
+

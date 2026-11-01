@@ -35,3 +35,4 @@ kit/out.mp4
 # Playwright & browser caches
 .playwright/
 test-results/
+
