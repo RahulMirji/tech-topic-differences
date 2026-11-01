@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Build and render artifacts
+kit/frames/
+kit/pv/
+kit/render.log
+kit/scene.html
+kit/*_scene.html
+kit/out.mp4
+
+# Video outputs (ignore root or scratch renders, keep examples)
+*.mp4
+!kit/examples/*.mp4
+!reference/frames/*.jpg
+
+# Playwright & browser caches
+.playwright/
+test-results/

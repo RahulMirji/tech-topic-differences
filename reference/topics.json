@@ -1,0 +1,654 @@
+{
+ "types": {
+  "FLOW": "components + arrows + packets travelling between them (use a trail/cascade stack when it gets long)",
+  "TIME": "something that happens over time (handshakes, requests, timelines): packets with chips, counters, toggles",
+  "SPEED": "the same action at different speed/cost: packet speed, meters filling, counters ticking",
+  "SHAPE": "two structures side by side (tables vs documents, layers, stacks): pieces pop in, one rule is broken to show the difference",
+  "ROLE": "who does what (human vs AI): a trail of steps, each step badge-ed with who acts",
+  "TEXT": "prompts, rules, context: bubbles, prompt cards, dashed frames, chips arriving one by one",
+  "RISK": "outcome and danger: green check vs red cross, shield, attacker, warning badges",
+  "LOOP": "cycles and repetition: ring/cycle icons, spinners, counters, repeated steps"
+ },
+ "topics": [
+  {
+   "n": 1,
+   "a": "Docker",
+   "b": "Kubernetes",
+   "type": "FLOW",
+   "left": "window(application) > arrow > container",
+   "right": "4 containers pop one by one > arrows > servers",
+   "assets": "logos: docker, kubernetes (tiles)",
+   "demo": "docker_vs_k8s #1"
+  },
+  {
+   "n": 2,
+   "a": "Container",
+   "b": "Pod",
+   "type": "SHAPE",
+   "left": "container hero > Application arrow > Instance caption",
+   "right": "2 pod outlines > containers drop inside one by one",
+   "assets": "IC.container, IC.pod",
+   "demo": "docker_vs_k8s #2"
+  },
+  {
+   "n": 3,
+   "a": "CI",
+   "b": "CD",
+   "type": "LOOP",
+   "left": "cycle hero (orange) > title > Code Pushed > Build > Test (stepRow)",
+   "right": "cycle hero (purple) > title > Same Code > Deploy > Production (stepRow)",
+   "assets": "IC.cycle, stepRow",
+   "demo": "patterns_demo #1"
+  },
+  {
+   "n": 4,
+   "a": "Horizontal scaling",
+   "b": "Vertical scaling",
+   "type": "SHAPE",
+   "left": "bracket > towers pop 1,2,3 > double arrow",
+   "right": "small tower > text > arrow > bigger tower",
+   "assets": "IC.tower, IC.bracket, IC.dbl",
+   "demo": "patterns_demo #2"
+  },
+  {
+   "n": 5,
+   "a": "Load balancer",
+   "b": "Reverse proxy",
+   "type": "FLOW",
+   "left": "3 users pop > balancer node > servers pop; packets go round-robin, one colour per server > say \"Spreads traffic\"",
+   "right": "client > shield proxy > server dims behind it > cache + TLS chips pop > say \"Speaks for the server\"",
+   "assets": "IC.tree, IC.avatar, IC.badge(shield), logo nginx",
+   "demo": ""
+  },
+  {
+   "n": 6,
+   "a": "REST",
+   "b": "gRPC",
+   "type": "SHAPE",
+   "left": "logo row (browsers) > http red lock vs https green lock",
+   "right": "binary chip > two gears > double arrow",
+   "assets": "tileHTML(IC.rest), tile(grpc), logoRow",
+   "demo": "patterns_demo #4"
+  },
+  {
+   "n": 7,
+   "a": "Stateless",
+   "b": "Stateful",
+   "type": "TIME",
+   "left": "client > server; request \"cart:1 item\" > server blinks memory-off > client resends EVERYTHING each time (growing chip) > say \"Sends it all again\"",
+   "right": "client > server + db; session chip > db cylinder fills with the item > second request is tiny > say \"Remembers you\"",
+   "assets": "IC.avatar, IC.tower, IC.db, CHIP, pkt",
+   "demo": ""
+  },
+  {
+   "n": 8,
+   "a": "Logging",
+   "b": "Monitoring",
+   "type": "SHAPE",
+   "left": "terminal card with coloured log levels",
+   "right": "3 skeleton cards pop > fill: CPU ring, rate sparkline, health check",
+   "assets": "IC.terminal, IC.skel, IC.cpu/rate/health",
+   "demo": "patterns_demo #3"
+  },
+  {
+   "n": 9,
+   "a": "Terraform",
+   "b": "Ansible",
+   "type": "FLOW",
+   "left": "tile intro (brand purple / black) > .tf file > terraform logo > servers pop one by one > say \"Creates infrastructure\"",
+   "right": "ansible logo > existing servers > gears spin > checklist ticks > say \"Configures it\"",
+   "assets": "logos: terraform, ansible; IC.tower, IC.bare(settings, list-checks)",
+   "demo": ""
+  },
+  {
+   "n": 10,
+   "a": "DevOps",
+   "b": "MLOps",
+   "type": "LOOP",
+   "left": "blue cycle ring CODE BUILD TEST DEPLOY MONITOR, spinner in the centre",
+   "right": "purple ring DATA TRAIN EVALUATE DEPLOY MONITOR RETRAIN; model node + data docs feed it",
+   "assets": "IC.cycle (two colours), IC.docs, IC.avatar(brain)",
+   "demo": ""
+  },
+  {
+   "n": 11,
+   "a": "SQL",
+   "b": "NoSQL",
+   "type": "SHAPE",
+   "left": "table header + rows slide in > row with an extra column is rejected (shake, red cross) > \"Fixed schema\"",
+   "right": "3 JSON cards with different shapes > new doc with an extra field slides in and fits (green check) > \"Any shape fits\"",
+   "assets": "logos postgresql, mongodb; ROW, IC.json",
+   "demo": "topics_demo #1"
+  },
+  {
+   "n": 12,
+   "a": "Cache",
+   "b": "Database",
+   "type": "SPEED",
+   "left": "user > cache tile; fast orange packets + \"~1 ms\" chip + meter fills in 0.35 s",
+   "right": "user > database; slow blue packet + \"~50 ms\" chip + meter crawls 1.7 s",
+   "assets": "IC.cache, IC.db, pkt, meter",
+   "demo": "topics_demo #2"
+  },
+  {
+   "n": 13,
+   "a": "Monolith",
+   "b": "Microservices",
+   "type": "SHAPE",
+   "left": "ONE big box; feature chips (Auth, Cart, Pay) pop INSIDE it; a change makes the whole box pulse red (rebuild everything)",
+   "right": "small services pop one by one in a re-tiling grid, each with its own db; one fails (shake, red cross) and the rest keep their green checks",
+   "assets": "stack grid, IC.container/IC.db, CHIP, IC.no/ok",
+   "demo": ""
+  },
+  {
+   "n": 14,
+   "a": "Sync",
+   "b": "Async",
+   "type": "TIME",
+   "left": "client > server; hourglass spins, \"waiting...\" blinks; reply returns, then the next request",
+   "right": "3 packets leave in parallel; \"doing other work\" meter keeps filling; replies arrive later with checks",
+   "assets": "IC.bare(hourglass), pkt, meter",
+   "demo": "topics_demo #3"
+  },
+  {
+   "n": 15,
+   "a": "Message queue",
+   "b": "Pub/Sub",
+   "type": "FLOW",
+   "left": "producer > tube; envelopes enter; each goes to ONE consumer (alternating) and gets a check",
+   "right": "publisher > topic node; each message splits into copies; EVERY subscriber gets one",
+   "assets": "IC.tube, IC.env, IC.node, path fx",
+   "demo": "topics_demo #4"
+  },
+  {
+   "n": 16,
+   "a": "Replication",
+   "b": "Sharding",
+   "type": "SHAPE",
+   "left": "one db > identical copies pop with sync arrows > \"same data everywhere\"",
+   "right": "one big db splits into 3 parts labelled A-H / I-P / Q-Z > \"different data per node\"",
+   "assets": "IC.db (3 colours), CHIP, IC.dbl",
+   "demo": ""
+  },
+  {
+   "n": 17,
+   "a": "Consistency",
+   "b": "Availability (CAP)",
+   "type": "SHAPE",
+   "left": "triangle C+P lit; network cut (dashed, red cross); node answers \"error\" until it is in sync",
+   "right": "triangle A+P lit; both nodes answer but one shows an older value chip (v1 vs v2)",
+   "assets": "IC.tri, IC.node, CHIP",
+   "demo": ""
+  },
+  {
+   "n": 18,
+   "a": "Latency",
+   "b": "Throughput",
+   "type": "SPEED",
+   "left": "ONE packet makes one trip; ms counter ticks up (countNum)",
+   "right": "many packets stream through a pipe; req/s counter climbs",
+   "assets": "pkt (n:6), countNum, IC.tube",
+   "demo": ""
+  },
+  {
+   "n": 19,
+   "a": "CDN",
+   "b": "Origin server",
+   "type": "FLOW",
+   "left": "far-away origin; packet takes a long slow path; \"200 ms\" counter",
+   "right": "user + nearby edge nodes (globe); one copy flies origin > edge once; packet is short and fast \"20 ms\"",
+   "assets": "IC.hero(globe), IC.tower, pkt, countNum",
+   "demo": ""
+  },
+  {
+   "n": 20,
+   "a": "Rate limiting",
+   "b": "Throttling",
+   "type": "TIME",
+   "left": "requests stream; counter hits the limit; a door closes; extra requests bounce with a \"429\" chip",
+   "right": "requests keep coming but the packet period lengthens (slows); all are served, slowly",
+   "assets": "pkt (period changes via 2 pkts), CHIP, IC.badge(lock)",
+   "demo": ""
+  },
+  {
+   "n": 21,
+   "a": "HTTP",
+   "b": "HTTPS",
+   "type": "RISK",
+   "left": "packet carries \"password: 1234\" in plain sight; attacker avatar (bug) reads it, red cross",
+   "right": "same packet shows a padlock and \"8f3a...\" gibberish; attacker blocked",
+   "assets": "IC.secure, CHIP, IC.avatar(bug)",
+   "demo": ""
+  },
+  {
+   "n": 22,
+   "a": "TCP",
+   "b": "UDP",
+   "type": "TIME",
+   "left": "SYN, SYN-ACK, ACK chips cross; connected check; data + confirmations; one packet lost, \"resend\"",
+   "right": "\"No handshake\"; 4 fast packets; one lost with a red cross and NO resend",
+   "assets": "CHIP, pkt, IC.no",
+   "demo": "topics_demo #5"
+  },
+  {
+   "n": 23,
+   "a": "WebSocket",
+   "b": "HTTP polling",
+   "type": "TIME",
+   "left": "(polling) client asks \"new?\" > \"no\" > \"no\" > \"yes\": alternating packets, request counter climbs",
+   "right": "one open tube; messages pushed both ways instantly (envelopes)",
+   "assets": "pkt both directions, countNum, IC.tube",
+   "demo": ""
+  },
+  {
+   "n": 24,
+   "a": "Forward proxy",
+   "b": "Reverse proxy",
+   "type": "FLOW",
+   "left": "dashed frame \"your network\" around the CLIENTS; shield proxy in front of them; arrows to the internet",
+   "right": "dashed frame around the SERVERS; shield proxy in front of them; arrows from the internet",
+   "assets": "FRAME, IC.badge(shield), IC.avatar, IC.tower",
+   "demo": ""
+  },
+  {
+   "n": 25,
+   "a": "API gateway",
+   "b": "Load balancer",
+   "type": "FLOW",
+   "left": "front door: Auth, Routing, Rate-limit chips pop; routes to 3 DIFFERENT services",
+   "right": "balancer spreads packets over 3 COPIES of one service",
+   "assets": "CHIP, IC.tree, IC.tower, pkt",
+   "demo": ""
+  },
+  {
+   "n": 26,
+   "a": "Authentication",
+   "b": "Authorization",
+   "type": "RISK",
+   "left": "trail: You > Show ID > Verified",
+   "right": "trail: Logged in > Profile (open) > Billing (closed) > Admin (locked)",
+   "assets": "stack trail, IC.step",
+   "demo": "topics_demo #6"
+  },
+  {
+   "n": 27,
+   "a": "Cookies",
+   "b": "JWT",
+   "type": "SHAPE",
+   "left": "browser stores a cookie with a session id; server looks it up in a session db on every request (lookup arrows)",
+   "right": "token chip with 3 coloured parts travels with the request; server verifies the signature (key); db is dimmed, no lookup",
+   "assets": "IC.bare(cookie), IC.db, CHIP, IC.badge(key)",
+   "demo": ""
+  },
+  {
+   "n": 28,
+   "a": "VM",
+   "b": "Container",
+   "type": "SHAPE",
+   "left": "layers pop: hardware > host OS > hypervisor > 2 VMs each with its OWN guest OS; heavy meter",
+   "right": "hardware > host OS > runtime > containers sharing one OS; small meter",
+   "assets": "stack cascade, IC.container, meter",
+   "demo": ""
+  },
+  {
+   "n": 29,
+   "a": "Docker image",
+   "b": "Container",
+   "type": "SHAPE",
+   "left": "image = locked read-only blueprint (docs stack + lock)",
+   "right": "container with a play spinner; copies pop from one image",
+   "assets": "IC.docs, IC.badge(lock), IC.container, spin fx",
+   "demo": ""
+  },
+  {
+   "n": 30,
+   "a": "Blue-green",
+   "b": "Canary",
+   "type": "TIME",
+   "left": "blue env live, green ready; traffic arrow flips 100% to green in one move",
+   "right": "traffic split 95/5 (mostly one lane) > 50/50 > 100/0 with a growing meter",
+   "assets": "pkt (lanes), meter, IC.tower (blue/green)",
+   "demo": ""
+  },
+  {
+   "n": 31,
+   "a": "Serverless",
+   "b": "Servers",
+   "type": "SPEED",
+   "left": "function icon pops ONLY when a request arrives and vanishes after; coin counter ticks per run",
+   "right": "server always on (LED blinks), idle; cost counter keeps ticking",
+   "assets": "IC.bare(zap), IC.tower, countNum, blink fx",
+   "demo": ""
+  },
+  {
+   "n": 32,
+   "a": "Helm",
+   "b": "Kustomize",
+   "type": "SHAPE",
+   "left": "template with placeholders > values file fills them > manifests typed out",
+   "right": "base yaml + overlay patch cards merge > final manifests",
+   "assets": "logo helm; typeText, IC.hero(layers/merge)",
+   "demo": ""
+  },
+  {
+   "n": 33,
+   "a": "Git merge",
+   "b": "Rebase",
+   "type": "TIME",
+   "left": "two branch lines with commit dots; feature merges back with a merge commit (diamond)",
+   "right": "feature commits slide on top of main (path fx) > straight line history",
+   "assets": "IC.node, IC.dbl/line draws, path fx",
+   "demo": ""
+  },
+  {
+   "n": 34,
+   "a": "Observability",
+   "b": "Monitoring",
+   "type": "SHAPE",
+   "left": "dashboards + a bell for KNOWN questions",
+   "right": "logs + metrics + traces pillars > search > a \"why?\" chip drills down to the cause",
+   "assets": "IC.cpu/rate, IC.bare(bell,search), CHIP",
+   "demo": ""
+  },
+  {
+   "n": 35,
+   "a": "Metrics",
+   "b": "Traces",
+   "type": "SHAPE",
+   "left": "sparkline chart + number counting up (req/s)",
+   "right": "waterfall: bars grow one after another across services with timing chips",
+   "assets": "IC.rate, countNum, grow bars (meter)",
+   "demo": ""
+  },
+  {
+   "n": 36,
+   "a": "Training",
+   "b": "Inference",
+   "type": "LOOP",
+   "left": "docs > brain; spinner; epoch counter; accuracy meter fills",
+   "right": "locked brain answers two questions with chat bubbles",
+   "assets": "IC.docs, IC.avatar(brain), BUB, countNum, meter",
+   "demo": "topics_demo #7"
+  },
+  {
+   "n": 37,
+   "a": "RAG",
+   "b": "Fine-tuning",
+   "type": "FLOW",
+   "left": "question > search docs > snippet attached to the prompt > LLM answers (model locked)",
+   "right": "dataset > weights update (brain recolours) > new model; \"knowledge baked in\"",
+   "assets": "IC.docs, IC.bare(search), BUB, IC.avatar(brain)",
+   "demo": ""
+  },
+  {
+   "n": 38,
+   "a": "LLM",
+   "b": "AI agent",
+   "type": "ROLE",
+   "left": "prompt > one text answer bubble, nothing else",
+   "right": "goal > plan checklist > tool icons (search, code, api) used in a loop > result",
+   "assets": "BUB, stack trail, IC.step, list-checks",
+   "demo": ""
+  },
+  {
+   "n": 39,
+   "a": "Vector DB",
+   "b": "Traditional DB",
+   "type": "SHAPE",
+   "left": "scatter plot with clusters; query dot > nearest cluster ringed \"similar meaning\"",
+   "right": "table; WHERE id = 3 highlights ONE row \"exact match\"",
+   "assets": "IC.scatter, ROW, logos postgresql",
+   "demo": ""
+  },
+  {
+   "n": 40,
+   "a": "Prompt engineering",
+   "b": "Fine-tuning",
+   "type": "TEXT",
+   "left": "vague prompt retypes into a detailed one (typeText); model stays locked; cheap and fast meters",
+   "right": "dataset trains the model (weights change); expensive and slow meters",
+   "assets": "typeText, PROMPT, meter, IC.avatar(brain)",
+   "demo": ""
+  },
+  {
+   "n": 41,
+   "a": "Vibe coding",
+   "b": "Traditional coding",
+   "type": "ROLE",
+   "left": "trail: prompt > AI writes > code > Accept",
+   "right": "you type code line by line; a highlight bar reads each line; understood check",
+   "assets": "stack trail, IC.code, PROMPT",
+   "demo": "topics_demo #8"
+  },
+  {
+   "n": 42,
+   "a": "Vibe coding",
+   "b": "AI-assisted coding",
+   "type": "ROLE",
+   "left": "AI generates; Accept-all button pulses; no review",
+   "right": "AI proposes a diff; you review (red/green lines), edit (pencil), steer, accept selectively",
+   "assets": "BTN, IC.code (diff), IC.bare(pencil, eye)",
+   "demo": ""
+  },
+  {
+   "n": 43,
+   "a": "Prompt",
+   "b": "Context",
+   "type": "TEXT",
+   "left": "one prompt bubble: what you type",
+   "right": "dashed \"Context window\" frame fills with file, history and rules chips one by one",
+   "assets": "PROMPT, FRAME, CHIP, stack grid",
+   "demo": ""
+  },
+  {
+   "n": 44,
+   "a": "Chat",
+   "b": "Agent",
+   "type": "ROLE",
+   "left": "answer with code in a bubble; copy icon; snippet flies into a file by hand",
+   "right": "agent bot; 3 files get sparkles; terminal runs npm test; \"all green\"",
+   "assets": "BUB, IC.code, path fx, IC.badge(sparkles)",
+   "demo": "topics_demo #9"
+  },
+  {
+   "n": 45,
+   "a": "Autocomplete",
+   "b": "Agentic coding",
+   "type": "ROLE",
+   "left": "one line types, grey ghost text completes it, Tab check",
+   "right": "plan checklist > files change > tests > done (trail)",
+   "assets": "typeText, IC.code, stack trail",
+   "demo": ""
+  },
+  {
+   "n": 46,
+   "a": "Zero-shot",
+   "b": "Few-shot",
+   "type": "TEXT",
+   "left": "prompt with no examples > unsure answer (question mark chip)",
+   "right": "2 or 3 example cards stack in one by one > prompt > answer in the right format",
+   "assets": "PROMPT, stack grid/trail, BUB",
+   "demo": ""
+  },
+  {
+   "n": 47,
+   "a": "Vague prompt",
+   "b": "Specific prompt",
+   "type": "TEXT",
+   "left": "\"make a login page\" > a generic, off-target result window",
+   "right": "chips pop one by one (stack, behaviour, edge cases, constraints) > precise result",
+   "assets": "PROMPT, CHIP, IC.win, stack trail",
+   "demo": ""
+  },
+  {
+   "n": 48,
+   "a": "Plan mode",
+   "b": "Build mode",
+   "type": "TIME",
+   "left": "checklist of steps pops; you approve with a thumbs-up BEFORE any code changes",
+   "right": "code window changes at once; \"files changed\" counter climbs",
+   "assets": "list items, BTN, countNum, IC.code",
+   "demo": ""
+  },
+  {
+   "n": 49,
+   "a": "System prompt",
+   "b": "User prompt",
+   "type": "TEXT",
+   "left": "standing rules card pinned on top (pin/lock) and stays for every request",
+   "right": "a new bubble each time; the old one is replaced",
+   "assets": "PROMPT, IC.badge(lock), BUB",
+   "demo": ""
+  },
+  {
+   "n": 50,
+   "a": "Context window",
+   "b": "Memory",
+   "type": "TEXT",
+   "left": "dashed window fills with items; meter reaches full; the oldest item scrolls off the top and fades",
+   "right": "notebook icon: session 1 writes a note; session 2 reads it back",
+   "assets": "FRAME, meter, IC.bare(book-open), path fx",
+   "demo": ""
+  },
+  {
+   "n": 51,
+   "a": "Rules file",
+   "b": "Prompt",
+   "type": "TEXT",
+   "left": "rules.md tag attached to three requests in a row (permanent)",
+   "right": "one-off prompt used once, then gone; next request has no tag",
+   "assets": "IC.bare(file-text), PROMPT, CHIP",
+   "demo": ""
+  },
+  {
+   "n": 52,
+   "a": "One big prompt",
+   "b": "Small iterative prompts",
+   "type": "LOOP",
+   "left": "giant wall of text > one messy output with red crosses",
+   "right": "small prompt > check > next prompt > check; blocks stack into a tower",
+   "assets": "typeText (long), stack cascade, IC.ok/no",
+   "demo": ""
+  },
+  {
+   "n": 53,
+   "a": "IDE-based AI",
+   "b": "Terminal-based AI",
+   "type": "FLOW",
+   "left": "editor window with a side chat panel (logo cursor)",
+   "right": "terminal window; command typed; AI replies in the terminal (logo claude)",
+   "assets": "logos cursor, claude; IC.code, IC.terminal",
+   "demo": ""
+  },
+  {
+   "n": 54,
+   "a": "Prototype",
+   "b": "Production app",
+   "type": "RISK",
+   "left": "laptop shows the app: \"works on my machine\" check",
+   "right": "checklist ticks one by one: users, errors, security, monitoring",
+   "assets": "IC.avatar(laptop), IC.step, IC.ok",
+   "demo": ""
+  },
+  {
+   "n": 55,
+   "a": "MCP",
+   "b": "API",
+   "type": "FLOW",
+   "left": "AI > one standard plug > many tools plug into the same port",
+   "right": "AI > tangled hand-wired lines to each tool, \"custom code\" chips",
+   "assets": "IC.bare(plug), logos github etc, CHIP",
+   "demo": ""
+  },
+  {
+   "n": 56,
+   "a": "Hallucination",
+   "b": "Bug",
+   "type": "RISK",
+   "left": "AI writes import fastjson-pro > registry search > \"does not exist\" red cross",
+   "right": "real code with a logic error > test fails red > magnifier > fix check",
+   "assets": "IC.code, IC.bare(search), IC.no/ok",
+   "demo": ""
+  },
+  {
+   "n": 57,
+   "a": "Git checkpoint",
+   "b": "Undo",
+   "type": "TIME",
+   "left": "timeline of commit dots; click an earlier one; state restores (check)",
+   "right": "undo stack counter runs 5 > 0; \"cannot go back\" red cross",
+   "assets": "IC.node, countNum, IC.no",
+   "demo": ""
+  },
+  {
+   "n": 58,
+   "a": "Code generation",
+   "b": "Code review",
+   "type": "ROLE",
+   "left": "AI writes code (code window types)",
+   "right": "diff with comment bubbles on lines; Approve / Request changes buttons",
+   "assets": "IC.code, BUB, BTN",
+   "demo": ""
+  },
+  {
+   "n": 59,
+   "a": "Working code",
+   "b": "Secure code",
+   "type": "RISK",
+   "left": "code runs: play > check > \"It runs\"",
+   "right": "key in env, input checked; attacker packets hit a shield and bounce",
+   "assets": "IC.code, IC.badge(shield-check), pkt",
+   "demo": "topics_demo #10"
+  },
+  {
+   "n": 60,
+   "a": "Demo",
+   "b": "Deployed app",
+   "type": "RISK",
+   "left": "polished window with hard-coded data: \"looks good\"",
+   "right": "needs env vars, database, hosting, domain; one is missing > crash > fixed",
+   "assets": "IC.win, IC.db, IC.hero(cloud), IC.ok/no",
+   "demo": ""
+  },
+  {
+   "n": 61,
+   "a": "Understanding the code",
+   "b": "Trusting the code",
+   "type": "RISK",
+   "left": "dev reads, finds the bug, fixes it (magnifier + wrench, check)",
+   "right": "error popup, \"?\" bubbles, spinner going in circles",
+   "assets": "IC.bare(search, wrench), BUB, spin fx",
+   "demo": ""
+  },
+  {
+   "n": 62,
+   "a": "Skills",
+   "b": "Prompts",
+   "type": "SHAPE",
+   "left": "a packaged skill folder reused by three requests (arrows to the same card)",
+   "right": "the same long prompt typed again and again; hourglass",
+   "assets": "IC.bare(folder-open), typeText, stack",
+   "demo": ""
+  },
+  {
+   "n": 63,
+   "a": "Single agent",
+   "b": "Multi-agent",
+   "type": "ROLE",
+   "left": "one bot, task chips queued: plan, code, test, docs; one long meter",
+   "right": "orchestrator + 4 bots with separate jobs; their meters fill in parallel and finish sooner",
+   "assets": "IC.avatar(bot), CHIP, meter",
+   "demo": ""
+  },
+  {
+   "n": 64,
+   "a": "Human in the loop",
+   "b": "Fully autonomous",
+   "type": "ROLE",
+   "left": "each step waits for Approve / Deny buttons; human clicks; steps check off",
+   "right": "steps run on their own (spinner, fast); a risky step slips through (red warning)",
+   "assets": "BTN, stack trail, IC.warn, spin fx",
+   "demo": ""
+  }
+ ]
+}

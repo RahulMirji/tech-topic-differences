@@ -1,0 +1,154 @@
+{
+ "source_video": {
+  "size": "720x1280",
+  "fps": 23.976,
+  "duration_s": 120.07,
+  "pairs": 10,
+  "seconds_per_pair": "~10-12",
+  "note": "graphics are in the top 720x640; the creator's cam fills the bottom half and is ignored"
+ },
+ "frame_u": "1u = 1 px of the 720-wide reference = 1.5 px of the 1080-wide output. Top half = 720u x 640u.",
+ "box": {
+  "outer_u": 286,
+  "border_u": 3,
+  "radius_u": 3,
+  "fill": "#FFFFFF",
+  "border_color": "#040404",
+  "shadow": {
+   "dx": -5,
+   "dy": 8,
+   "blur": 0,
+   "color": "#040404"
+  },
+  "left_box_outer_x": [
+   56,
+   341
+  ],
+  "right_box_outer_x": [
+   379,
+   664
+  ],
+  "gap_u": 37,
+  "margin_left_u": 56,
+  "top_y_u": 103,
+  "bottom_y_u": 387,
+  "interior_u": 280,
+  "persist": "the two boxes stay on screen for the whole video; only their contents change"
+ },
+ "name_label": {
+  "font": "Poppins ExtraBold (800)",
+  "fill": "#FFFFFF",
+  "stroke": "#000 ~3u outside",
+  "size_u": "~46 (40 for two lines)",
+  "center_y_u": 445,
+  "center_x": "box centre (199 / 522)",
+  "two_lines": "long names wrap to 2 lines, e.g. 'Horizontal Scaling'",
+  "ours_on_cream": {
+   "decision": "plain black #0A0A0A Poppins 800 ~47u, no outline/pill/shadow (creator-approved after comparing 6 options)",
+   "why": "reference labels were white with outline over a dark video; on the cream bg white has no contrast"
+  }
+ },
+ "whats_the_difference_label": {
+  "text": "WHAT'S THE DIFFERENCE?",
+  "font": "Poppins Black (900), tracking about -0.08em",
+  "fill": "#F8EC00",
+  "stroke": "black ~3u",
+  "shadow": "3u,4u hard black",
+  "width_u": 572,
+  "cap_height_u": "~30",
+  "center_x_u": 358,
+  "center_y_u": 440,
+  "ours_on_cream": {
+   "tracking": "+0.015em",
+   "why": "reference -0.078em fused the outlined letters; creator asked for a little spacing",
+   "font_u": "~43 (fitted to 572u)"
+  }
+ },
+ "logo_tiles": {
+  "docker": {
+   "tile": "white",
+   "glyph": "#1D63ED",
+   "glyph_bbox": "238x188u = 86% of box width"
+  },
+  "kubernetes": {
+   "tile": "white",
+   "glyph": "#326CE5",
+   "glyph_bbox": "208x202u = 75%"
+  },
+  "rest_api": {
+   "tile": "brand",
+   "bg": "#0A66F5",
+   "glyph": "white cloud+gear"
+  },
+  "grpc": {
+   "tile": "brand",
+   "bg": "#244C5A",
+   "glyph": "white wordmark"
+  },
+  "terraform": {
+   "tile": "brand",
+   "bg": "#5C4EE5",
+   "glyph": "white"
+  },
+  "ansible": {
+   "tile": "brand",
+   "bg": "#1A1918",
+   "glyph": "white A"
+  }
+ },
+ "blues": {
+  "docker_official": "#1D63ED",
+  "kubernetes_official": "#326CE5",
+  "icon_primary": "#1C74DC",
+  "icon_outline": "#1459C4",
+  "icon_light_fill": "#E4F0FC",
+  "icon_mid": "#4C94F4"
+ },
+ "timing_s_pair1": {
+  "box1_pop": 0.0,
+  "label1_fade_in": 0.12,
+  "box2_pop": 0.75,
+  "label2_fade_in": 0.87,
+  "labels_hard_cut": 1.8,
+  "wtd_pop": 1.84,
+  "wtd_overshoot_peak": 1.88,
+  "wtd_hold_until": 2.65,
+  "boxes_cleared": 2.68,
+  "first_element_pop": 2.84,
+  "first_text_wipe_start": 2.93,
+  "left_label_fade_in": 3.05,
+  "arrow_draw": 3.97,
+  "container_pop": 4.34,
+  "right_label_fade_in": 5.75,
+  "k8s_items_every": "0.25-0.5 s",
+  "pair_end_cut": 9.4
+ },
+ "primitives": {
+  "box_pop": "scale easeOutBack(c1~1.7) from 0, 0.25 s; measured widths 139,251,305,297,282,275 (-> 278) at 24 fps; blur in first frames",
+  "element_pop": "scale .5+.5*easeOutBack(c1 2.6), 0.26 s, peak 1.10-1.12 at 0.12 s, opacity 0->1 in 0.1 s, blur 4px->0",
+  "text_wipe": "left-to-right reveal with blur, 0.45 s (word or line)",
+  "arrow_draw": "directional wipe, 0.10-0.15 s (2-3 frames at 24 fps)",
+  "name_label_in": "opacity+blur+slight scale, ~0.3 s (0.15 s after a cut)",
+  "yellow_label": "scale 0.78 -> 1.12 -> 1.0 in ~0.17 s",
+  "state_changes": "hard cuts (labels, clearing the boxes): never a fade"
+ },
+ "interior_layouts_u": {
+  "docker_box": {
+   "text_application": "y 21-45, centre x 134",
+   "window_icon": "75x62 at (97,56)",
+   "arrow": "~20x34 at y 120",
+   "container": "144x90 at (61,161)"
+  },
+  "k8s_box": {
+   "containers": "4 x 84x52 at (38|158, 38|100)",
+   "arrows": "2 at y 153",
+   "servers": "2 x ~90x66 at y 192",
+   "text_servers": "centre between arrows y 160"
+  }
+ },
+ "text_in_box_u": {
+  "title": "~25 bold, 2 lines max (e.g. 'Continuous Integration')",
+  "label": "~19 medium/semi-bold ('application')",
+  "caption": "~13 in the original; use >=15 in new work"
+ }
+}

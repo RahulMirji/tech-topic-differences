@@ -1,0 +1,134 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Poppins;src:url(assets/fonts/poppins-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:Poppins;src:url(assets/fonts/poppins-latin-600-normal.woff2);font-weight:600}
+@font-face{font-family:Poppins;src:url(assets/fonts/poppins-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:Poppins;src:url(assets/fonts/poppins-latin-800-normal.woff2);font-weight:800}
+@font-face{font-family:Poppins;src:url(assets/fonts/poppins-latin-900-normal.woff2);font-weight:900}
+@font-face{font-family:Urbanist;src:url(assets/fonts/urbanist-latin-wght-normal.woff2);font-weight:100 900}
+:root{--bg:#F7F5EF;--box:#FFFFFF;--ink:#191919;--line:#0A0A0A;
+ --blue:#1D6AE5;--blue-d:#1459C4;--blue-m:#4C94F4;--blue-l:#CFE1FA;--blue-xl:#E8F1FD;--navy:#0F2A5C;
+ --green:#1E9E55;--red:#D3392F;--orange:#F5A00B;--purple:#7C4DFF;--yellow:#F8EC00;--grey:#C9CED6;--grey-d:#7A869A}
+html,body{margin:0;background:#F7F5EF;width:1080px;height:960px;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:720px;height:640px;transform:scale(1.5);transform-origin:0 0;background:var(--bg);overflow:hidden;font-family:Poppins,sans-serif;color:var(--ink)}
+.box{position:absolute;left:56px;top:103px;width:286px;height:286px;box-sizing:border-box;background:var(--box);border:3px solid var(--line);border-radius:3px;box-shadow:-5px 8px 0 var(--line);overflow:hidden}
+.in{position:absolute;left:0;top:0;width:280px;height:280px;transform-origin:0 0}
+.it{position:absolute;transform-origin:50% 50%}
+.it svg{width:100%;height:100%;display:block;overflow:visible}
+.tx{white-space:nowrap;text-align:center;line-height:1.15;font-family:Poppins,sans-serif}
+.lab{position:absolute;top:408px;width:600px;text-align:center;font:800 47px/1.05 Poppins,sans-serif;letter-spacing:-.035em;color:var(--line);
+ white-space:pre-line;transform-origin:50% 40%}
+/* name labels: plain black Poppins ExtraBold on the cream bg (no outline, no pill, no shadow). The reference used white+outline because it sat on a dark camera feed; on cream white vanishes. */
+.wtd{position:absolute;left:0;width:720px;top:411px;text-align:center;font:900 44px/1.05 Poppins,sans-serif;letter-spacing:.015em;color:var(--yellow);
+ -webkit-text-stroke:6.5px var(--line);paint-order:stroke fill;text-shadow:3px 4px 0 var(--line);white-space:nowrap;transform-origin:50% 50%}
+</style></head><body>
+<div id="stage">
+ <div class="box" id="boxL" style="left:56px"><div class="in" id="inL"></div></div>
+ <div class="box" id="boxR" style="left:379px"><div class="in" id="inR"></div></div>
+</div>
+<script>
+const ASSETS=/*__ASSETS__*/;const LOGOS=ASSETS.logos,ICONS=ASSETS.icons;
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),pr=(t,s,d)=>cl((t-s)/d),lerp=(a,b,k)=>a+(b-a)*k;
+const E={oc:x=>1-Math.pow(1-x,3),oq:x=>1-Math.pow(1-x,4),io:x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2,
+ ob:(x,c1=1.70158)=>{const c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)}};
+/* ---------- measured primitives (reference video, 24 fps analysis) ----------
+ box pop   : scale = easeOutBack(c1 1.8) from 0, 0.25 s, blur 4px->0           (Docker box: 0.5, .9, 1.10, 1.07, 1.015, .99)
+ element pop: scale = .5+.5*easeOutBack(c1 2.6), 0.26 s, opacity 0->1 in .1 s, blur 4px->0 (peak 1.10-1.12 at 0.12 s)
+ text wipe : clip left->right 0.45 s + blur 3px->0
+ arrow draw: clip along the arrow 0.15 s
+ name label: opacity+blur(6px->0)+scale(.92->1) 0.30 s;  yellow label: scale .78->1.12->1.0 in 0.17 s
+ state changes (clear, label swap) are HARD CUTS, never fades. */
+const CUTS=[],ITEMS=[],LABS=[],WTDS=[],BOXPOP={};
+const KINDS_EXT={},DUR={pop:.26,wipe:.45,draw:.15,fade:.3,static:.01};let applyFx=()=>{},applyReflow=()=>{};   // extension points filled by motion.js
+/* ---------- FOCUS SWAP (box geometry) ----------
+ neutral : two 286u boxes side by side (intro, hero recaps)
+ BIG     : the focused box grows to cover the top half (x 56..664 = the same side margins as neutral, y 56..568)
+ focus('L'|'R', t): that box glides to BIG while the other glides back to its own slot (and ends up hidden behind BIG)
+ neutral(t)       : both glide back to the side-by-side state (use at the end of a pair to show both finished boxes)
+ border 3->5u and hard shadow (-5,8)->(-8,13) scale with the box; contents scale uniformly (fit) and stay centred; labels track the box. */
+const NEUTRAL={L:{x:56,y:103,w:286,h:286},R:{x:379,y:103,w:286,h:286}};
+const BIG={x:56,y:52,w:608,h:496};
+const KF={L:[],R:[]},GEO={L:NEUTRAL.L,R:NEUTRAL.R};
+function morph(side,t0,to,o={}){KF[side].push({t0,to,dur:o.dur||.9,delay:o.delay||0});KF[side].sort((a,b)=>a.t0-b.t0)}
+function focus(side,t,o={}){const other=side==='L'?'R':'L';morph(side,t,BIG,{dur:o.dur,delay:o.delay==null?.05:o.delay});morph(other,t,NEUTRAL[other],{dur:o.dur})}
+function neutral(t,o={}){['L','R'].forEach(s=>morph(s,t,NEUTRAL[s],{dur:o.dur||.8}))}
+function geoAt(side,t,n=KF[side].length){let j=-1;for(let i=0;i<n;i++)if(KF[side][i].t0<=t)j=i;if(j<0)return NEUTRAL[side];
+ const k=KF[side][j],from=j===0?NEUTRAL[side]:geoAt(side,k.t0,j),p=E.io(pr(t,k.t0+k.delay,k.dur));
+ return{x:lerp(from.x,k.to.x,p),y:lerp(from.y,k.to.y,p),w:lerp(from.w,k.to.w,p),h:lerp(from.h,k.to.h,p)}}
+const nextCut=t=>{for(const c of CUTS)if(c>t+1e-6)return c;return Infinity};
+function cut(t){CUTS.push(t);CUTS.sort((a,b)=>a-b)}
+function boxPop(side,at){BOXPOP[side]=at}
+function add(side,o){const el=document.createElement('div');el.className='it';el.style.cssText=`left:${o.x||0}px;top:${o.y||0}px;width:${o.w}px;height:${o.h}px;${o.z?'z-index:'+o.z+';':''}`;
+ el.innerHTML=o.html;(o.parent||$('in'+side)).appendChild(el);ITEMS.push(Object.assign({el,kind:'pop',dir:'down'},o))}
+/* full-bleed logo tile (intro). style 'white': coloured glyph on white; 'brand': white glyph on brand colour.
+   The glyph is fitted by its REAL bbox: longest side = fit * box (reference: Docker whale 0.86, Kubernetes 0.75, brand tiles ~0.72). */
+function tile(side,at,slug,style,color,o={}){const mono=LOGOS[slug],g=mono||LOGOS[slug+'.color']||'';const fill=style==='brand'?'#fff':color,bg=style==='brand'?color:'#fff',fit=o.fit||.78;
+ const flt=(!mono&&style==='brand')?'filter:brightness(0) invert(1);':'';   // a colour-only mark becomes a white glyph on a brand tile
+ const html=`<div style="position:absolute;inset:0;background:${bg}"></div><svg class="tg" viewBox="0 0 24 24" style="${flt}position:absolute;left:0;top:0;width:100%;height:100%" fill="${fill}"><g>${inner(g)}</g></svg>`;
+ add(side,{at,kind:o.kind||'static',x:-3,y:-3,w:286,h:286,html,until:o.until});
+ const svg=ITEMS[ITEMS.length-1].el.querySelector('svg.tg'),bb=svg.querySelector('g').getBBox(),L=Math.max(bb.width,bb.height)/fit;
+ svg.setAttribute('viewBox',`${bb.x+bb.width/2-L/2} ${bb.y+bb.height/2-L/2} ${L} ${L}`)}
+function label(side,at,text,o={}){const el=document.createElement('div');el.className='lab';el.textContent=text;
+ let alt=null;if(text.includes('\n')){alt=document.createElement('div');alt.className='lab';alt.textContent=text.replace(/\n/g,' ');$('stage').appendChild(alt)}
+ $('stage').appendChild(el);LABS.push(Object.assign({el,alt,side,dur:.3,out:0,base:null},o,{at}))}
+function wtd(at,until,text="WHAT'S THE DIFFERENCE?"){const el=document.createElement('div');el.className='wtd';el.innerHTML='<span style="display:inline-block">'+text+'</span>';$('stage').appendChild(el);WTDS.push({el,at,until,fit:false})}
+const meas=(el,f)=>{const d=el.style.display,v=el.style.visibility;el.style.display='block';el.style.visibility='hidden';const r=f();el.style.display=d;el.style.visibility=v;return r};  // measure hidden elements correctly (display:none reports width 0)
+function fitWtd(el){el.style.fontSize='44px';const w=meas(el,()=>el.firstChild.offsetWidth);el.style.fontSize=(44*572/Math.max(w,1))+'px'}
+/* fits are measured on the first seek, after the fonts are loaded (render.py/preview.py wait for document.fonts) */
+function fitLabel(l){const el=l.el;if(!el.firstChild||el.firstChild.nodeType===3){const t=el.textContent;el.innerHTML='';const sp=document.createElement('span');sp.style.display='inline-block';sp.textContent=t;el.appendChild(sp)}
+ el.style.fontSize='47px';const w=meas(el,()=>el.firstChild.offsetWidth),lines=(el.firstChild.textContent.match(/\n/g)||[]).length+1;let b=Math.min(47,47*300/Math.max(w,1));if(lines>1)b=Math.min(b,40);l.base=l.size||b;if(l.alt){const a=l.alt;a.innerHTML='';const sp=document.createElement('span');sp.style.display='inline-block';sp.textContent=a.getAttribute('data-t')||l.el.firstChild.textContent.replace(/\n/g,' ');a.appendChild(sp);a.style.fontSize='47px';l.base2=Math.min(47,47*500/Math.max(meas(a,()=>sp.offsetWidth),1))}}
+/* ---------- drawing helpers (blue family, 3u outlines, light fills) ---------- */
+const inner=s=>s.replace(/<svg[^>]*>|<\/svg>|<title>.*?<\/title>/g,'');
+const lu=(name,x,y,size,color='#1D6AE5',sw=2.2)=>`<g transform="translate(${x},${y}) scale(${size/24})" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${inner(ICONS[name]||'')}</g>`;
+const logoG=(slug,x,y,size,color)=>`<g transform="translate(${x},${y}) scale(${size/24})" fill="${color||'#1D63ED'}">${inner(LOGOS[slug]||'')}</g>`;
+const TX=(text,size=17,weight=700,color='#191919')=>`<div class="tx" style="font-size:${size}px;font-weight:${weight};color:${color}">${text}</div>`;
+const IC={
+ arrow:(dir='down',color='#1D6AE5')=>{const P={down:['0 0 24 40','M12 3V33M3 24L12 35L21 24'],right:['0 0 40 24','M3 12H33M24 3L35 12L24 21'],left:['0 0 40 24','M37 12H7M16 3L5 12L16 21'],up:['0 0 24 40','M12 37V7M3 16L12 5L21 16']}[dir];
+  return `<svg viewBox="${P[0]}"><path d="${P[1]}" fill="none" stroke="${color}" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
+ win:(glyph='box')=>`<svg viewBox="0 0 80 66"><rect x="2" y="2" width="76" height="62" rx="7" fill="#fff" stroke="#1459C4" stroke-width="3"/><path d="M2 9a7 7 0 0 1 7-7h62a7 7 0 0 1 7 7v9H2z" fill="#1D6AE5"/><circle cx="13" cy="10" r="2.7" fill="#fff"/><circle cx="23" cy="10" r="2.7" fill="#fff"/><circle cx="33" cy="10" r="2.7" fill="#fff"/>${lu(glyph,24,24,32,'#1D6AE5',2.1)}</svg>`,
+ container:(logo='docker')=>`<svg viewBox="0 0 160 100"><path d="M4 22L30 8H152V72L122 88Z" fill="#CFE1FA"/><path d="M122 22L152 8V72L122 88Z" fill="#1D6AE5"/>${[.14,.28,.42,.56,.7,.84].map(u=>`<path d="M${122+30*u} ${22-14*u}V${88-14*u}" stroke="#A9CBF9" stroke-width="2.4" stroke-linecap="round"/>`).join('')}<rect x="4" y="22" width="118" height="66" rx="3" fill="#E9F2FF"/><path d="M4 22L30 8H152V72L122 88H4Z M4 22H122V88 M122 22L152 8" fill="none" stroke="#1459C4" stroke-width="3.8" stroke-linejoin="round" stroke-linecap="round"/>${logoG(logo,27,23,70,'#1D63ED')}</svg>`,
+ server:(n=2)=>{let s='';for(let i=0;i<n;i++){const y=4+i*30;
+   s+=`<path d="M92 ${y+10}L102 ${y+2}V${y+24}L92 ${y+32}Z" fill="#AEBBD1" stroke="#4A5A78" stroke-width="2" stroke-linejoin="round"/><path d="M4 ${y+10}L14 ${y+2}H102L92 ${y+10}Z" fill="#F1F4F9" stroke="#4A5A78" stroke-width="2" stroke-linejoin="round"/><rect x="4" y="${y+10}" width="88" height="22" rx="3" fill="url(#sg)" stroke="#4A5A78" stroke-width="2"/><circle cx="15" cy="${y+21}" r="3.4" fill="#fff" stroke="#6B7A94" stroke-width="1.6"/><circle cx="15" cy="${y+21}" r="1.5" fill="#34C759"/><circle cx="27" cy="${y+21}" r="3.4" fill="#fff" stroke="#6B7A94" stroke-width="1.6"/><circle cx="27" cy="${y+21}" r="1.5" fill="#F5A623"/><path d="M52 ${y+16}V${y+26}M58 ${y+16}V${y+26}M64 ${y+16}V${y+26}M76 ${y+21}H84" stroke="#5E6F8C" stroke-width="2.2" stroke-linecap="round"/>`}
+  return `<svg viewBox="0 0 106 ${n*30+8}"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#C3CFE2"/></linearGradient></defs>${s}</svg>`},
+ pod:(n=2)=>{let c='';for(let i=0;i<n;i++)c+=`<g transform="translate(14,${34+i*44}) scale(.42)">${inner(IC.container('docker'))}</g>`;
+  return `<svg viewBox="0 0 90 ${46+n*44}"><rect x="4" y="18" width="82" height="${24+n*44}" rx="14" fill="#fff" stroke="#2B2B2B" stroke-width="2.6"/><rect x="24" y="4" width="42" height="22" rx="5" fill="#1B1B1B"/><text x="45" y="20" text-anchor="middle" font-family="Poppins" font-weight="800" font-size="13" fill="#fff">POD</text>${c}</svg>`},
+ glyph:(name,color='#1D6AE5')=>`<svg viewBox="0 0 64 64"><rect x="3" y="3" width="58" height="58" rx="14" fill="#E8F1FD" stroke="#1459C4" stroke-width="3"/>${lu(name,14,14,36,color,2.2)}</svg>`,
+ logo:(slug,color)=>`<svg viewBox="0 0 24 24" fill="${color||'#1D63ED'}">${inner(LOGOS[slug]||'')}</svg>`,
+ logoc:slug=>ASSETS.logos[slug+'.color']||''
+};
+/* ---------- seek ---------- */
+function applyAnim(el,kind,p,o){
+ if(KINDS_EXT[kind]){KINDS_EXT[kind](el,p,o);return}
+ if(kind==='static'){el.style.opacity=1;return}
+ if(kind==='pop'){const s=.5+.5*E.ob(p,2.6);el.style.transform=`scale(${s})`;el.style.opacity=cl(p/.4);el.style.filter=`blur(${(1-cl(p/.6))*4}px)`;return}
+ if(kind==='fade'){el.style.opacity=E.oc(p);el.style.filter=`blur(${(1-p)*4}px)`;return}
+ if(kind==='wipe'){const q=E.oc(p);el.style.clipPath=p>=1?'none':`inset(-8px ${(1-q)*100}% -8px -8px)`;el.style.opacity=.35+.65*cl(p/.5);el.style.filter=`blur(${(1-p)*3}px)`;return}
+ if(kind==='draw'){const q=E.io(p),d=o.dir;const c={down:`inset(0 0 ${(1-q)*100}% 0)`,up:`inset(${(1-q)*100}% 0 0 0)`,right:`inset(0 ${(1-q)*100}% 0 0)`,left:`inset(0 0 0 ${(1-q)*100}%)`}[d];el.style.clipPath=c;el.style.opacity=1;return}
+}
+window.seek=t=>{
+ for(const sd of ['L','R']){const b=$('box'+sd),g=geoAt(sd,t),p0=BOXPOP[sd];GEO[sd]=g;
+  const k=cl((g.w-286)/(BIG.w-286)),bw=lerp(3,5,k),iw=g.w-2*bw,ih=g.h-2*bw,sc=Math.min(iw,ih)/280;
+  const og=GEO[sd==='L'?'R':'L'];const covered=og&&og.w>=BIG.w-2&&g.w<og.w-40&&g.x>=og.x-2&&g.x+g.w<=og.x+og.w+3&&g.y>=og.y-2&&g.y+g.h<=og.y+og.h;
+  Object.assign(b.style,{visibility:covered?'hidden':'visible',left:g.x+'px',top:g.y+'px',width:g.w+'px',height:g.h+'px',borderWidth:bw+'px',boxShadow:`${lerp(-5,-8,k)}px ${lerp(8,13,k)}px 0 var(--line)`,zIndex:Math.round(g.w)});
+  $('in'+sd).style.transform=`translate(${(iw-280*sc)/2}px,${(ih-280*sc)/2}px) scale(${sc})`;
+  if(p0==null){b.style.opacity=1;b.style.transform='none'}
+  else{const p=pr(t,p0,.25);b.style.opacity=p>0?cl(p/.35):0;b.style.transform=`scale(${E.ob(p,1.8)})`;b.style.filter=`blur(${(1-cl(p/.6))*4}px)`}}
+ applyReflow(t);
+ for(const it of ITEMS){const end=Math.min(it.until==null?Infinity:it.until,nextCut(it.at));
+  if(t<it.at||t>=end){it.el.style.display='none';continue}
+  it.el.style.display='block';it.el.style.transform='none';it.el.style.filter='none';it.el.style.clipPath='none';
+  applyAnim(it.el,it.kind,pr(t,it.at,it.dur||DUR[it.kind]||.3),it);if(it.fx)applyFx(it,t)}
+ for(const l of LABS){const end=Math.min(l.until==null?Infinity:l.until,nextCut(l.at));
+  if(t<l.at||t>=end){l.el.style.display='none';if(l.alt)l.alt.style.display='none';continue}
+  const g=GEO[l.side],k=cl((g.w-286)/(BIG.w-286)),p=pr(t,l.at,l.dur),fo=l.out?1-E.oc(pr(t,end-l.out,l.out)):1;
+  if(l.base==null)fitLabel(l);
+  const wS=l.alt?cl((k-.35)/.3):0,base=Math.min(1,1);   // 0 = two-line variant (neutral), 1 = single-line variant (big)
+  const place=(e,fs,w)=>{e.style.display=w>0.001?'block':'none';e.style.left=(g.x+g.w/2-300)+'px';e.style.top=(g.y+g.h+19)+'px';e.style.fontSize=fs+'px';e.style.opacity=E.oc(p)*fo*w;e.style.filter=`blur(${(1-p)*6}px)`;e.style.transform=`scale(${.92+.08*E.oc(p)})`};
+  place(l.el,l.base*(1+.13*k),1-wS);if(l.alt)place(l.alt,l.base2*(1+.13*k),wS)}
+ for(const w of WTDS){if(t<w.at||t>=Math.min(w.until,nextCut(w.at))){w.el.style.display='none';continue}
+  if(!w.fit){fitWtd(w.el);w.fit=true}const p=pr(t,w.at,.17);w.el.style.display='block';w.el.style.visibility='visible';w.el.style.opacity=cl(p/.4);w.el.style.transform=`scale(${.78+.22*E.ob(p,3.2)})`}
+};
+/*__MOTION__*/
+/*__BUILDERS__*/
+/*__CONFIG__*/
+</script></body></html>
