@@ -18,10 +18,8 @@
 <table>
   <tr>
     <td align="center" width="50%">
-      <a href="https://www.instagram.com/reel/DfHChwOKYtW/" target="_blank">
-        <img src="kit/examples/instagram_thumb.png" alt="Watch on Instagram" width="320" />
-      </a>
-      <br/><strong>📱 <a href="https://www.instagram.com/reel/DfHChwOKYtW/">Watch Live Reel on Instagram</a></strong>
+      <img src="kit/examples/vibecoding_preview.gif" alt="Final Output with Creator Talking" width="320" />
+      <br/><strong>🎥 Final Output (Creator Talking)</strong>
     </td>
     <td align="center" width="50%">
       <img src="kit/examples/preview.gif" alt="Docker vs Kubernetes" width="320" />
