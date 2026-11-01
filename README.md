@@ -33,13 +33,38 @@ Here is the exact style of video this skill creates for creators—top-half dyna
       </a>
     </td>
     <td align="center" valign="top" width="50%">
-      <!-- Looping Animation Preview -->
+      <!-- Looping Animation 1: Docker vs Kubernetes -->
       <a href="https://www.instagram.com/reel/DfHChwOKYtW/" target="_blank">
         <img src="kit/examples/preview.gif" alt="Docker vs Kubernetes Reel Preview" width="320" style="border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); max-width:100%;" />
       </a>
-      <p><em>Autoplaying Motion Graphics (Docker vs K8s)</em></p>
-      <!-- HTML5 Video Player -->
-      <video src="kit/examples/docker_vs_k8s.mp4" autoplay loop muted playsinline width="320" style="border-radius:12px; max-width:100%;"></video>
+      <p><strong>1. Docker vs Kubernetes</strong><br/><em>Focus-Swap & Progressive Container Reflow</em></p>
+      <br/>
+      <!-- Looping Animation 2: CI vs CD Patterns Demo -->
+      <a href="https://www.instagram.com/reel/DfHChwOKYtW/" target="_blank">
+        <img src="kit/examples/patterns_preview.gif" alt="CI vs CD Patterns Demo" width="320" style="border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); max-width:100%;" />
+      </a>
+      <p><strong>2. CI vs CD (Patterns Demo)</strong><br/><em>Cycle Archetype & Timed Step-Row Pipelines</em></p>
+    </td>
+  </tr>
+</table>
+
+<br/>
+
+### 🎬 Motion Graphics Reels (Playing Side-by-Side in Loop)
+
+<table>
+  <tr>
+    <th align="center" width="50%">🐳 Example 1: Docker vs Kubernetes</th>
+    <th align="center" width="50%">🔄 Example 2: CI vs CD Patterns</th>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <img src="kit/examples/preview.gif" alt="Docker vs Kubernetes (Focus-Swap)" width="320" style="border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); max-width:100%;" />
+      <p><strong>Docker vs Kubernetes</strong><br/><em>Focus-Swap Motion & Progressive Container Reflow</em></p>
+    </td>
+    <td align="center" valign="top" width="50%">
+      <img src="kit/examples/patterns_preview.gif" alt="CI vs CD Patterns Demo" width="320" style="border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); max-width:100%;" />
+      <p><strong>CI vs CD</strong><br/><em>Cycle Archetype & Timed Step-Row Pipelines</em></p>
     </td>
   </tr>
 </table>
